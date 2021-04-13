@@ -81,11 +81,40 @@ var createTodaysHours = function () {
 };
 
 var getPastPresentOrFutureClassName = function (hourLabel) {
+  console.log("getPastPresentOrFutureClassName START...");
+
   // based on the hour label, returns either
   // "past", "present", or "future" based on current time of day
+  console.log("  hour label -> " + hourLabel);
+
+  // convert the hourLabel to a moment object, then reformat for a comparison with current hour
+  var labelHour = moment(hourLabel, "h A").format("HH");
+
+  console.log("  label hour -> " + labelHour);
+
+  // get current time of day in form of "H AM/PM"
+  var currentHour = moment().format("HH");
+
+  console.log("  current hour -> " + currentHour);
+
+  if (labelHour - currentHour > 0) {
+    // the label hour is in the future
+    console.log("   labelHour " + labelHour + " is in the future");
+    return "future";
+  } else if (labelHour - currentHour == 0) {
+    // the label hour is in the present
+    console.log("   labelHour " + labelHour + " is in the present");
+    return "present";
+  } else {
+    // the label hour is in the past
+    console.log("   labelHour " + labelHour + " is in the past");
+    return "past";
+  }
 };
 
 // execute when page loads
 updateBannerWithTodaysDate();
 
 createTodaysHours();
+
+getPastPresentOrFutureClassName("10 AM");
