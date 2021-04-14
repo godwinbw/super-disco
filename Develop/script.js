@@ -13,9 +13,13 @@ var getTimeBlockDiv = function (hourLabel, hourId) {
   console.log("   hourLabel -> " + hourLabel + " hourId -> " + hourId);
 
   var thisCol = $(
-    "<div class='time-block col-2' id='" + hourLabel + "'></div>"
+    "<div class='hour col-2' hour-label='" + hourLabel + "'></div>"
   );
-  thisCol.text(hourLabel);
+
+  //now append a time block
+  $("<div class='time-block' id='" + hourLabel + "' ></div>")
+    .text(hourLabel)
+    .appendTo(thisCol);
 
   return thisCol;
 };
@@ -26,7 +30,7 @@ var getDescriptionDiv = function (hourLabel, hourId) {
   console.log("   hourLabel -> " + hourLabel + " hourId -> " + hourId);
 
   var thisCol = $(
-    "<div class='description col-8' id='" + hourLabel + "' ></div>"
+    "<div class='description col-8' hour-label='" + hourLabel + "' ></div>"
   );
 
   return thisCol;
@@ -37,7 +41,9 @@ var getSaveButtonDiv = function (hourLabel, hourId) {
   console.log("getSaveButtonDiv START...");
   console.log("   hourLabel -> " + hourLabel + " hourId -> " + hourId);
 
-  var thisCol = $("<div class='saveBtn col-2' id='" + hourLabel + "'></div>");
+  var thisCol = $(
+    "<div class='saveBtn col-2' hour-label='" + hourLabel + "'></div>"
+  );
 
   // add the fontawesome save icon to this div
   $("<i class='fas fa-save'></i>").appendTo(thisCol);
@@ -68,7 +74,7 @@ var createTodaysHours = function () {
     console.log("   hour -> " + hours[i]);
 
     //create a row
-    var thisRow = $("<div class='row' id='" + i + "' ></div>");
+    var thisRow = $("<div class='row' hour-label='" + hours[i] + "' ></div>");
 
     // each row has 3 columns - time block, description, and save button
     getTimeBlockDiv(hours[i], i).appendTo(thisRow);
@@ -80,7 +86,7 @@ var createTodaysHours = function () {
   }
 };
 
-var getPastPresentOrFutureClassName = function (hourLabel) {
+var getPastPresentOrFutureClassName = function (currentHour, hourLabel) {
   console.log("getPastPresentOrFutureClassName START...");
 
   // based on the hour label, returns either
@@ -91,10 +97,6 @@ var getPastPresentOrFutureClassName = function (hourLabel) {
   var labelHour = moment(hourLabel, "h A").format("HH");
 
   console.log("  label hour -> " + labelHour);
-
-  // get current time of day in form of "H AM/PM"
-  var currentHour = moment().format("HH");
-
   console.log("  current hour -> " + currentHour);
 
   if (labelHour - currentHour > 0) {
@@ -112,9 +114,35 @@ var getPastPresentOrFutureClassName = function (hourLabel) {
   }
 };
 
+var updateDescriptionRowBackgroundColor = function () {
+  console.log("updateDescriptionRowBackgroundColor START...");
+  // update each description row background color based on past, present, or future
+
+  // get current time of day in range of 0 -23
+  var currentHour = moment().format("HH");
+  console.log("   currentHour -> " + currentHour);
+
+  //loop through all the row elements in the #today-planner element
+  // each one is a row.  get the attribute hour-label to see the hour of that row
+  $("#today-planner")
+    .children()
+    .each((index, element) => {
+      //get the hour-label attribute
+      var hourLabel = $(element).attr("hour-label");
+      console.log("hour-label -> " + hourLabel);
+
+      // see if this is past, present, or future
+      var bgClass = getPastPresentOrFutureClassName(currentHour, hourLabel);
+      console.log("bgClass -> " + bgClass);
+
+      // assign this bgClass to all descendents of this element with class = description
+      $(element).children(".description").addClass(bgClass);
+    });
+};
+
 // execute when page loads
 updateBannerWithTodaysDate();
 
 createTodaysHours();
 
-getPastPresentOrFutureClassName("10 AM");
+updateDescriptionRowBackgroundColor();
