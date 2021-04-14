@@ -1,3 +1,7 @@
+// used to determine if we should upate the description background color
+var hourAtLastTickUpdate;
+
+// updates banner at top of page with today's date
 var updateBannerWithTodaysDate = function () {
   console.log("updateBannerWithTodaysDate START...");
 
@@ -141,10 +145,19 @@ var updateDescriptionRowBackgroundColor = function () {
 };
 
 var updateTick = function () {
-  // this updates the description background colors everytime it gets called
-  console.log("updateTick START!");
-  updateDescriptionRowBackgroundColor();
+  // this checks to see if it should update the description background color
+  var thisHour = moment().format("HH"); // hour in 0-24 format
+
+  if (thisHour !== hourAtLastTickUpdate) {
+    //we need to update the background, the hour has changed
+    console.log("updating description background color");
+    updateDescriptionRowBackgroundColor();
+  }
+
+  hourAtLastTickUpdate = thisHour;
 };
+
+// user clicks on a description, replace div with a form
 
 // execute when page loads
 
@@ -157,7 +170,8 @@ createTodaysHours();
 // 3. load the contents of the rows with any saved data
 
 // 4. update the description row backgorund color
+hourAtLastTickUpdate = moment().format("HH");
 updateDescriptionRowBackgroundColor();
 
-//5. start a timer, that updates the background color every 30 seconds
-setInterval(updateTick, 1000 * 30);
+//5. start a timer, checks if it should update description background color every second
+setInterval(updateTick, 1000 * 1);
