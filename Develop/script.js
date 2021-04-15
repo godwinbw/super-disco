@@ -40,6 +40,15 @@ var saveTaskDetailToLocalStorage = function (hourLabel, taskDetail) {
   console.log("saveTaskDetailToLocalStorage START...");
   console.log("     hourLabel  -> " + hourLabel);
   console.log("     taskDetail -> " + taskDetail);
+
+  //load from local storage, and then save
+  //loadHourlyDetailFromLocalStorage();
+
+  // replace the entry we are saving
+  hourly_detail[hourLabel] = taskDetail;
+
+  // and now save the entire array back to local storage
+  localStorage.setItem("hourly-detail", JSON.stringify(hourly_detail));
 };
 
 // updates banner at top of page with today's date
@@ -79,7 +88,7 @@ var getDescriptionDiv = function (hourLabel) {
   );
 
   // set the description to the saved value
-  thisCol.val(hourly_detail[hourLabel]);
+  thisCol.text(hourly_detail[hourLabel]);
 
   $("<p class='task-detail' hour-label='" + hourLabel + "'></p>").appendTo(
     thisCol
@@ -280,4 +289,23 @@ $(".description").on("blur", "textarea", function () {
 
   // replace textarea with p elemeent
   $(this).replaceWith(taskDetailP);
+});
+
+// when the save button is clicked, save the text detail for that hour into local storage
+$(".saveBtn").on("click", function () {
+  console.log("save button clicked!");
+
+  // determine hour-label for this save button
+  var hourLabel = $(this).attr("hour-label");
+  console.log("   hourLabel -> " + hourLabel);
+
+  //now get the text from the class task-detail that has the same hourLabel
+  var taskDetail = $(".task-detail", "[hour-label='" + hourLabel + "']").text();
+  //var taskDetailhtml = taskDetail.text();
+
+  console.log("   taskDetail -> " + $(taskDetail));
+  //console.log("   taskDetailhtml -> " + taskDetailhtml);
+
+  // save this to local storage
+  saveTaskDetailToLocalStorage(hourLabel, taskDetail);
 });
