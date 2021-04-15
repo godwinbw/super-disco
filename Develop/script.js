@@ -224,3 +224,25 @@ $(".description").on("click", function () {
 
   textInput.trigger("focus");
 });
+
+// when the textarea area loses focus, convert textarea back to a p
+$(".description").on("blur", "textarea", function () {
+  console.log("description blurred!");
+
+  // find the child element p current text
+  var text = $(this).val().trim();
+  console.log("   text -> " + text);
+
+  // get the current hour label
+  var hourLabel = $(this).attr("hour-label");
+  console.log("   hourLabel -> " + hourLabel);
+
+  // recreate the p element
+  var taskDetailP = $("<p>")
+    .addClass("task-detail")
+    .attr("hour-label", hourLabel)
+    .text(text);
+
+  // replace textarea with p elemeent
+  $(this).replaceWith(taskDetailP);
+});
