@@ -1,6 +1,3 @@
-// used to determine if we should upate the description background color
-var hourAtLastTickUpdate;
-
 // updates banner at top of page with today's date
 var updateBannerWithTodaysDate = function () {
   console.log("updateBannerWithTodaysDate START...");
@@ -35,6 +32,10 @@ var getDescriptionDiv = function (hourLabel, hourId) {
 
   var thisCol = $(
     "<div class='description col-8' hour-label='" + hourLabel + "' ></div>"
+  );
+
+  $("<p class='task-detail' hour-label='" + hourLabel + "'></p>").appendTo(
+    thisCol
   );
 
   return thisCol;
@@ -145,21 +146,51 @@ var updateDescriptionRowBackgroundColor = function () {
 };
 
 var updateTick = function () {
-  // this checks to see if it should update the description background color
-  var thisHour = moment().format("HH"); // hour in 0-24 format
+  // updates the background color of the rows, then schedules the next time
+  // for this function to run to be at the start of the next hour, whenever that is
 
-  if (thisHour !== hourAtLastTickUpdate) {
-    //we need to update the background, the hour has changed
-    console.log("updating description background color");
-    updateDescriptionRowBackgroundColor();
-  }
+  console.log("updating description background color");
+  updateDescriptionRowBackgroundColor();
 
-  hourAtLastTickUpdate = thisHour;
+  // now see when we need to run again
+  // get current time, split into an array of hours, minutes, seconds, and milliseconds of current time
+  var now = moment().format("HH:mm:ss:SSS");
+  var splitNow = now.split(":");
+  var minutes = parseInt(splitNow[1]);
+  var seconds = parseInt(splitNow[2]);
+  var ms = parseInt(splitNow[3]);
+
+  console.log("   current time is -> " + now);
+  console.log("    minutes -> " + minutes);
+  console.log("    seconds -> " + seconds);
+  console.log("    ms => " + ms);
+
+  // determine the current ms past the hour
+  var millisecondsPastTheHour = minutes * 60 * 1000 + seconds * 1000 + ms;
+  console.log("   ms past the hour -> " + millisecondsPastTheHour);
+
+  // calculate when we need to run again, for it to be top of the hour
+  var totalMsInAnHour = 60 * 60 * 1000;
+  console.log("   total ms in an hour -> " + totalMsInAnHour);
+
+  var intervalForNextUpdate = totalMsInAnHour - millisecondsPastTheHour;
+  console.log(
+    "   will schedule next update at -> " +
+      intervalForNextUpdate +
+      " ms from now"
+  );
+
+  // set a timeout for this function to run again at the top of the next hour
+  // where it will then calculate the next time it needs to run again, and set itself
+  // to be called again
+  setTimeout(updateTick, intervalForNextUpdate);
 };
 
-// user clicks on a description, replace div with a form
-
+// ******
+//
 // execute when page loads
+//
+// ******
 
 // 1. first, update the banner with today's date
 updateBannerWithTodaysDate();
@@ -169,9 +200,27 @@ createTodaysHours();
 
 // 3. load the contents of the rows with any saved data
 
-// 4. update the description row backgorund color
-hourAtLastTickUpdate = moment().format("HH");
-updateDescriptionRowBackgroundColor();
+// 4. start doing background update ticks
+updateTick();
 
-//5. start a timer, checks if it should update description background color every second
-setInterval(updateTick, 1000 * 1);
+//5. wait for user clicks
+
+// user clicks on a description, replace p with a form
+$(".description").on("click", function () {
+  console.log("description clicked!");
+  //console.log(" this -> " + $(this).html());
+
+  //find child p element and change to text input
+
+  var text = $(this).children(".task-detail").text().trim();
+  var hourLabel = $(this).attr("hour-label");
+
+  var textInput = $("<textarea>")
+    .addClass("textarea")
+    .attr("hour-label", hourLabel)
+    .val(text);
+
+  $(this).children(".task-detail").replaceWith(textInput);
+
+  textInput.trigger("focus");
+});
