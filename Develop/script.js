@@ -16,6 +16,21 @@ var loadHourlyDetailFromLocalStorage = function () {
   // and returns as a list
 
   console.log("loadHourlyDetailFromLocalStorage START...");
+  var hourlyDetailFromStorage = JSON.parse(
+    localStorage.getItem("hourly-detail")
+  );
+
+  if (hourlyDetailFromStorage) {
+    // we have some items from local storage, let's load them into the hourly_detail list
+    console.log("  localStorage hourly detail...");
+    for (var hourLabel in hourlyDetailFromStorage) {
+      console.log("   hourLabel   -> " + hourLabel);
+      console.log("   task detail -> " + hourlyDetailFromStorage[hourLabel]);
+
+      //update our hourly_detail list
+      hourly_detail[hourLabel] = hourlyDetailFromStorage[hourLabel];
+    }
+  }
 };
 
 var saveTaskDetailToLocalStorage = function (hourLabel, taskDetail) {
@@ -62,6 +77,9 @@ var getDescriptionDiv = function (hourLabel) {
   var thisCol = $(
     "<div class='description col-8' hour-label='" + hourLabel + "' ></div>"
   );
+
+  // set the description to the saved value
+  thisCol.val(hourly_detail[hourLabel]);
 
   $("<p class='task-detail' hour-label='" + hourLabel + "'></p>").appendTo(
     thisCol
@@ -208,13 +226,14 @@ var updateTick = function () {
 //
 // ******
 
-// 1. first, update the banner with today's date
+// 1. load saved data from local storage
+loadHourlyDetailFromLocalStorage();
+
+// 2. first, update the banner with today's date
 updateBannerWithTodaysDate();
 
-// 2. create today's hours
+// 3. create today's hours
 createTodaysHours();
-
-// 3. load the contents of the rows with any saved data
 
 // 4. start doing background update ticks
 updateTick();
