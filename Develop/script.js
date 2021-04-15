@@ -1,31 +1,39 @@
 // global variable to hold all values of hours we are tracking (work hours from 9 am to 5 pm)
-var hourly_detail = {
-  "9 AM": "",
-  "10 AM": "",
-  "11 AM": "",
-  "12 PM": "",
-  "1 PM": "",
-  "2 PM": "",
-  "3 PM": "",
-  "4 PM": "",
-  "5 PM": "",
-};
+var hourly_detail;
 
+var initializeHourlyDetail = function () {
+  // initializes our hourly detail variable
+  console.log("initializeHourlyDetail START...");
+
+  hourly_detail = {
+    "9 AM": "",
+    "10 AM": "",
+    "11 AM": "",
+    "12 PM": "",
+    "1 PM": "",
+    "2 PM": "",
+    "3 PM": "",
+    "4 PM": "",
+    "5 PM": "",
+  };
+};
 var loadHourlyDetailFromLocalStorage = function () {
   // this function loads all the saved tasks from local storage
   // and returns as a list
+
+  initializeHourlyDetail();
 
   console.log("loadHourlyDetailFromLocalStorage START...");
   var hourlyDetailFromStorage = JSON.parse(
     localStorage.getItem("hourly-detail")
   );
 
+  // if we have anything in local storage, load the entries into our global variable hourly_detail
   if (hourlyDetailFromStorage) {
-    // we have some items from local storage, let's load them into the hourly_detail list
-    console.log("  localStorage hourly detail...");
+    //console.log("  localStorage hourly detail...");
     for (var hourLabel in hourlyDetailFromStorage) {
-      console.log("   hourLabel   -> " + hourLabel);
-      console.log("   task detail -> " + hourlyDetailFromStorage[hourLabel]);
+      //console.log("   hourLabel   -> " + hourLabel);
+      //console.log("   task detail -> " + hourlyDetailFromStorage[hourLabel]);
 
       //update our hourly_detail list
       hourly_detail[hourLabel] = hourlyDetailFromStorage[hourLabel];
@@ -42,7 +50,7 @@ var saveTaskDetailToLocalStorage = function (hourLabel, taskDetail) {
   console.log("     taskDetail -> " + taskDetail);
 
   //load from local storage, and then save
-  //loadHourlyDetailFromLocalStorage();
+  loadHourlyDetailFromLocalStorage();
 
   // replace the entry we are saving
   hourly_detail[hourLabel] = taskDetail;
@@ -63,8 +71,8 @@ var updateBannerWithTodaysDate = function () {
 
 var getTimeBlockDiv = function (hourLabel) {
   // returns a div for the current time block
-  console.log("getTimeBlockDiv START...");
-  console.log("   hourLabel -> " + hourLabel);
+  //console.log("getTimeBlockDiv START...");
+  //console.log("   hourLabel -> " + hourLabel);
 
   var thisCol = $(
     "<div class='hour col-2' hour-label='" + hourLabel + "'></div>"
@@ -80,8 +88,8 @@ var getTimeBlockDiv = function (hourLabel) {
 
 var getDescriptionDiv = function (hourLabel) {
   // returns a div for the current description block
-  console.log("getDescriptionDiv START...");
-  console.log("   hourLabel -> " + hourLabel);
+  //console.log("getDescriptionDiv START...");
+  //console.log("   hourLabel -> " + hourLabel);
 
   var thisCol = $(
     "<div class='description col-8' hour-label='" + hourLabel + "' ></div>"
@@ -99,8 +107,8 @@ var getDescriptionDiv = function (hourLabel) {
 
 var getSaveButtonDiv = function (hourLabel) {
   // returns a div for the current save button
-  console.log("getSaveButtonDiv START...");
-  console.log("   hourLabel -> " + hourLabel);
+  //console.log("getSaveButtonDiv START...");
+  //console.log("   hourLabel -> " + hourLabel);
 
   var thisCol = $(
     "<div class='saveBtn col-2' hour-label='" + hourLabel + "'></div>"
@@ -204,17 +212,17 @@ var updateTick = function () {
   var ms = parseInt(splitNow[3]);
 
   console.log("   current time is -> " + now);
-  console.log("    minutes -> " + minutes);
-  console.log("    seconds -> " + seconds);
-  console.log("    ms => " + ms);
+  //console.log("    minutes -> " + minutes);
+  //console.log("    seconds -> " + seconds);
+  //console.log("    ms => " + ms);
 
   // determine the current ms past the hour
   var millisecondsPastTheHour = minutes * 60 * 1000 + seconds * 1000 + ms;
-  console.log("   ms past the hour -> " + millisecondsPastTheHour);
+  //console.log("   ms past the hour -> " + millisecondsPastTheHour);
 
   // calculate when we need to run again, for it to be top of the hour
   var totalMsInAnHour = 60 * 60 * 1000;
-  console.log("   total ms in an hour -> " + totalMsInAnHour);
+  //console.log("   total ms in an hour -> " + totalMsInAnHour);
 
   var intervalForNextUpdate = totalMsInAnHour - millisecondsPastTheHour;
   console.log(
@@ -303,7 +311,7 @@ $(".saveBtn").on("click", function () {
   var taskDetail = $(".task-detail", "[hour-label='" + hourLabel + "']").text();
   //var taskDetailhtml = taskDetail.text();
 
-  console.log("   taskDetail -> " + $(taskDetail));
+  console.log("   taskDetail -> " + taskDetail);
   //console.log("   taskDetailhtml -> " + taskDetailhtml);
 
   // save this to local storage
