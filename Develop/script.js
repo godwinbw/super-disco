@@ -1,3 +1,32 @@
+// global variable to hold all values of hours we are tracking (work hours from 9 am to 5 pm)
+var hourly_detail = {
+  "9 AM": "",
+  "10 AM": "",
+  "11 AM": "",
+  "12 PM": "",
+  "1 PM": "",
+  "2 PM": "",
+  "3 PM": "",
+  "4 PM": "",
+  "5 PM": "",
+};
+
+var loadHourlyDetailFromLocalStorage = function () {
+  // this function loads all the saved tasks from local storage
+  // and returns as a list
+
+  console.log("loadHourlyDetailFromLocalStorage START...");
+};
+
+var saveTaskDetailToLocalStorage = function (hourLabel, taskDetail) {
+  // thsi function saves a task detail for a single hour
+  // only that hour's task detail is saved, all others are unchanged
+
+  console.log("saveTaskDetailToLocalStorage START...");
+  console.log("     hourLabel  -> " + hourLabel);
+  console.log("     taskDetail -> " + taskDetail);
+};
+
 // updates banner at top of page with today's date
 var updateBannerWithTodaysDate = function () {
   console.log("updateBannerWithTodaysDate START...");
@@ -8,10 +37,10 @@ var updateBannerWithTodaysDate = function () {
   $("#currentDay").text(currentDay);
 };
 
-var getTimeBlockDiv = function (hourLabel, hourId) {
+var getTimeBlockDiv = function (hourLabel) {
   // returns a div for the current time block
   console.log("getTimeBlockDiv START...");
-  console.log("   hourLabel -> " + hourLabel + " hourId -> " + hourId);
+  console.log("   hourLabel -> " + hourLabel);
 
   var thisCol = $(
     "<div class='hour col-2' hour-label='" + hourLabel + "'></div>"
@@ -25,10 +54,10 @@ var getTimeBlockDiv = function (hourLabel, hourId) {
   return thisCol;
 };
 
-var getDescriptionDiv = function (hourLabel, hourId) {
+var getDescriptionDiv = function (hourLabel) {
   // returns a div for the current description block
   console.log("getDescriptionDiv START...");
-  console.log("   hourLabel -> " + hourLabel + " hourId -> " + hourId);
+  console.log("   hourLabel -> " + hourLabel);
 
   var thisCol = $(
     "<div class='description col-8' hour-label='" + hourLabel + "' ></div>"
@@ -41,10 +70,10 @@ var getDescriptionDiv = function (hourLabel, hourId) {
   return thisCol;
 };
 
-var getSaveButtonDiv = function (hourLabel, hourId) {
+var getSaveButtonDiv = function (hourLabel) {
   // returns a div for the current save button
   console.log("getSaveButtonDiv START...");
-  console.log("   hourLabel -> " + hourLabel + " hourId -> " + hourId);
+  console.log("   hourLabel -> " + hourLabel);
 
   var thisCol = $(
     "<div class='saveBtn col-2' hour-label='" + hourLabel + "'></div>"
@@ -61,30 +90,17 @@ var createTodaysHours = function () {
   // remove all existing hours from the #today-planner element
   $("#today-planner").empty();
 
-  // create hourly rows in the #today-planner element
-  var hours = [
-    "9 AM",
-    "10 AM",
-    "11 AM",
-    "12 PM",
-    "1 PM",
-    "2 PM",
-    "3 PM",
-    "4 PM",
-    "5 PM",
-  ];
-
-  // loop through hours and create a row for each hour
-  for (var i = 0; i < hours.length; i++) {
-    console.log("   hour -> " + hours[i]);
+  // loop through hourly_detail and create a row for each hour
+  for (var hourLabel in hourly_detail) {
+    console.log("   hour -> " + hourLabel);
 
     //create a row
-    var thisRow = $("<div class='row' hour-label='" + hours[i] + "' ></div>");
+    var thisRow = $("<div class='row' hour-label='" + hourLabel + "' ></div>");
 
     // each row has 3 columns - time block, description, and save button
-    getTimeBlockDiv(hours[i], i).appendTo(thisRow);
-    getDescriptionDiv(hours[i], i).appendTo(thisRow);
-    getSaveButtonDiv(hours[i], i).appendTo(thisRow);
+    getTimeBlockDiv(hourLabel).appendTo(thisRow);
+    getDescriptionDiv(hourLabel).appendTo(thisRow);
+    getSaveButtonDiv(hourLabel).appendTo(thisRow);
 
     //add this row to today's planner
     thisRow.appendTo("#today-planner");
