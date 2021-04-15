@@ -52,6 +52,4 @@
 
 ### **Challenge Five - screenshot**
 
-<!--
-<img src="./challenge_4_screenshot.png" style="width: 50%; height=auto;">
--->
+<img src="./challenge_5_screenshot.png" style="width: 50%; height=auto;">
